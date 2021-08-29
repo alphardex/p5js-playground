@@ -100,6 +100,8 @@ const sketch = (s: p5) => {
   let time = 0;
   let N = 12;
   let velocity = 0.02;
+  let mousePositions: Point[] = [];
+  const maxPos = 12;
 
   const setup = () => {
     s.createCanvas(s.windowWidth, s.windowHeight, s.WEBGL);
@@ -112,20 +114,23 @@ const sketch = (s: p5) => {
   const draw = () => {
     s.background(0);
 
-    s.push();
-    for (let i = 0; i < N; i++) {
-      const ratio = i / N;
+    const mousePos = new Point(s.mouseX - s.width / 2, s.mouseY - s.height / 2);
 
+    const shape = new PointShape(s, mousePos.x, mousePos.y, 90, 6, 6);
+    shape.draw();
+
+    mousePositions.push(mousePos);
+    if (mousePositions.length > maxPos) {
+      mousePositions.shift();
+    }
+
+    mousePositions.forEach((pos, i) => {
+      const ratio = i / mousePositions.length;
       s.fill(0.5 + ratio, 0.7, 0.25);
-
-      const offset = s.PI * ratio;
-      let x = 160 * s.cos(s.TWO_PI * time - offset);
-
-      const shape = new PointShape(s, x, 0, 90, 6, 6);
+      const shape = new PointShape(s, pos.x, pos.y, 90, 6, 6);
       shape.blur(10, ratio);
       shape.draw();
-    }
-    s.pop();
+    });
 
     time += velocity;
   };
