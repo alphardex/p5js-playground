@@ -1,39 +1,44 @@
 import p5 from "p5";
 
+class Point {
+  x: number;
+  y: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 class PointLine {
   s: p5;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  d: number;
+  p1: Point;
+  p2: Point;
+  thickness: number;
   dotCount: number;
   modifyFunc: Function;
-  constructor(s: p5, x1: number, y1: number, x2: number, y2: number, d = 6) {
+  constructor(s: p5, p1: Point, p2: Point, thickness = 1) {
     this.s = s;
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
-    this.d = d;
-    let dotCount = s.dist(x1, y1, x2, y2);
+    this.p1 = p1;
+    this.p2 = p2;
+    this.thickness = thickness;
+    let dotCount = s.dist(p1.x, p1.y, p2.x, p2.y);
     this.dotCount = s.ceil(dotCount);
     const modifyFunc = (x: number, y: number) => [x, y];
     this.modifyFunc = modifyFunc;
   }
   draw() {
     for (let i = 0; i < this.dotCount; i++) {
-      let x = this.s.map(i, 0, this.dotCount, this.x1, this.x2);
-      let y = this.s.map(i, 0, this.dotCount, this.y1, this.y2);
+      let x = this.s.map(i, 0, this.dotCount, this.p1.x, this.p2.x);
+      let y = this.s.map(i, 0, this.dotCount, this.p1.y, this.p2.y);
       [x, y] = this.modifyFunc(x, y);
-      this.s.ellipse(x, y, this.d, this.d);
+      this.s.ellipse(x, y, this.thickness, this.thickness);
     }
   }
   blur(seed = 0, amount = 0) {
     const blurPower = 1 + this.s.sq(amount);
     this.dotCount *= blurPower;
     const blurPower2 = 1 - amount;
-    this.d *= blurPower2;
+    this.thickness *= blurPower2;
     this.modifyFunc = (x: number, y: number) => {
       x += seed * amount * this.s.randomGaussian(0, 1);
       y += seed * amount * this.s.randomGaussian(0, 1);
@@ -46,23 +51,36 @@ class PointShape extends PointLine {
   x: number;
   y: number;
   r: number;
-  p: number;
+  edgeCount: number;
   lines: PointLine[];
-  constructor(s: p5, x: number, y: number, r: number, p: number) {
-    super(s, x, x, y, y);
+  constructor(
+    s: p5,
+    x: number,
+    y: number,
+    r: number,
+    edgeCount: number,
+    thickness = 1
+  ) {
+    super(s, new Point(x, y), new Point(x, y), thickness);
     this.x = x;
     this.y = y;
     this.r = r;
-    this.p = p;
+    this.edgeCount = edgeCount;
     this.lines = [];
-    for (let i = 0; i < this.p; i++) {
-      const x1 = this.x + this.r * this.s.cos((this.s.TWO_PI * i) / this.p);
-      const y1 = this.y + this.r * this.s.sin((this.s.TWO_PI * i) / this.p);
+    for (let i = 0; i < this.edgeCount; i++) {
+      const x1 =
+        this.x + this.r * this.s.cos((this.s.TWO_PI * i) / this.edgeCount);
+      const y1 =
+        this.y + this.r * this.s.sin((this.s.TWO_PI * i) / this.edgeCount);
       const x2 =
-        this.x + this.r * this.s.cos((this.s.TWO_PI * (i + 1)) / this.p);
+        this.x +
+        this.r * this.s.cos((this.s.TWO_PI * (i + 1)) / this.edgeCount);
       const y2 =
-        this.y + this.r * this.s.sin((this.s.TWO_PI * (i + 1)) / this.p);
-      const line = new PointLine(this.s, x1, y1, x2, y2);
+        this.y +
+        this.r * this.s.sin((this.s.TWO_PI * (i + 1)) / this.edgeCount);
+      const p1 = new Point(x1, y1);
+      const p2 = new Point(x2, y2);
+      const line = new PointLine(this.s, p1, p2, thickness);
       this.lines.push(line);
     }
   }
@@ -103,7 +121,7 @@ const sketch = (s: p5) => {
       const offset = s.PI * ratio;
       let x = 160 * s.cos(s.TWO_PI * time - offset);
 
-      const shape = new PointShape(s, x, 0, 90, 6);
+      const shape = new PointShape(s, x, 0, 90, 6, 6);
       shape.blur(10, ratio);
       shape.draw();
     }
