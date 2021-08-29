@@ -97,9 +97,6 @@ class PointShape extends PointLine {
 }
 
 const sketch = (s: p5) => {
-  let time = 0;
-  let N = 12;
-  let velocity = 0.02;
   let mousePositions: Point[] = [];
   const maxPos = 12;
 
@@ -131,8 +128,6 @@ const sketch = (s: p5) => {
       shape.blur(10, ratio);
       shape.draw();
     });
-
-    time += velocity;
   };
 
   s.setup = setup;
