@@ -6,6 +6,11 @@
           IsometricWave
         </router-link>
       </li>
+      <li>
+        <router-link :to="{ name: 'BlurryLines' }">
+          BlurryLines
+        </router-link>
+      </li>
     </ul>
   </div>
 </template>

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";
 import IsometricWave from "../views/IsometricWave.vue";
+import BlurryLines from "../views/BlurryLines.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,6 +14,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/isometric-wave",
     name: "IsometricWave",
     component: IsometricWave,
+  },
+  {
+    path: "/blurry-lines",
+    name: "BlurryLines",
+    component: BlurryLines,
   },
   {
     path: "/:pathMatch(.*)*",
