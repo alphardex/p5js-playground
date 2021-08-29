@@ -63,12 +63,12 @@ const sketch = (s: p5) => {
     for (let i = 0; i < N; i++) {
       s.fill(0.5 + i / N, 0.7, 0.25);
       let offset = (s.PI * i) / N;
-      let x = 160 * s.cos(time - offset);
+      let x = 160 * s.cos(s.TWO_PI * time - offset);
       blurryShape(x, 0, 90, 4, 10, i / N);
     }
     s.pop();
 
-    time += 0.2;
+    time += 0.02;
   };
 
   s.setup = setup;
