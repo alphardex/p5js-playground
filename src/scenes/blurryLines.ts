@@ -121,7 +121,7 @@ const sketch = (s: p5) => {
       s.blendMode(s.ADD);
       const ratio = i / mousePositions.length;
       s.fill(0.5 + ratio, 0.7, 0.25);
-      const shape = new PointShape(s, pos.x, pos.y, 90, 6, 6);
+      const shape = new PointShape(s, pos.x, pos.y, 50, 6, 6);
       shape.blur(10, ratio);
       shape.draw();
       s.blendMode(s.BLEND);
