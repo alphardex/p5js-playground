@@ -101,32 +101,30 @@ const sketch = (s: p5) => {
   const maxPos = 12;
 
   const setup = () => {
-    s.createCanvas(s.windowWidth, s.windowHeight, s.WEBGL);
+    s.createCanvas(s.windowWidth, s.windowHeight);
 
     s.noStroke();
-    s.blendMode(s.ADD);
     s.colorMode(s.HSB, 1);
   };
 
   const draw = () => {
     s.background(0);
 
-    const mousePos = new Point(s.mouseX - s.width / 2, s.mouseY - s.height / 2);
+    const mousePos = new Point(s.mouseX, s.mouseY);
 
-    const shape = new PointShape(s, mousePos.x, mousePos.y, 90, 6, 6);
-    shape.draw();
-
-    mousePositions.push(mousePos);
+    mousePositions.unshift(mousePos);
     if (mousePositions.length > maxPos) {
-      mousePositions.shift();
+      mousePositions.pop();
     }
 
     mousePositions.forEach((pos, i) => {
+      s.blendMode(s.ADD);
       const ratio = i / mousePositions.length;
       s.fill(0.5 + ratio, 0.7, 0.25);
       const shape = new PointShape(s, pos.x, pos.y, 90, 6, 6);
       shape.blur(10, ratio);
       shape.draw();
+      s.blendMode(s.BLEND);
     });
   };
 
