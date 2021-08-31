@@ -1,27 +1,18 @@
 import p5 from "p5";
 
-class Point {
-  x: number;
-  y: number;
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
 class PointLine {
   s: p5;
-  p1: Point;
-  p2: Point;
+  p1: p5.Vector;
+  p2: p5.Vector;
   thickness: number;
   dotCount: number;
   modifyFunc: Function;
-  constructor(s: p5, p1: Point, p2: Point, thickness = 1) {
+  constructor(s: p5, p1: p5.Vector, p2: p5.Vector, thickness = 1) {
     this.s = s;
     this.p1 = p1;
     this.p2 = p2;
     this.thickness = thickness;
-    let dotCount = s.dist(p1.x, p1.y, p2.x, p2.y);
+    let dotCount = p1.dist(p2);
     this.dotCount = s.ceil(dotCount);
     const modifyFunc = (x: number, y: number) => [x, y];
     this.modifyFunc = modifyFunc;
@@ -31,7 +22,7 @@ class PointLine {
       let x = this.s.map(i, 0, this.dotCount, this.p1.x, this.p2.x);
       let y = this.s.map(i, 0, this.dotCount, this.p1.y, this.p2.y);
       [x, y] = this.modifyFunc(x, y);
-      this.s.ellipse(x, y, this.thickness, this.thickness);
+      this.s.circle(x, y, this.thickness);
     }
   }
   blur(seed = 0, amount = 0) {
@@ -61,7 +52,7 @@ class PointShape extends PointLine {
     edgeCount: number,
     thickness = 1
   ) {
-    super(s, new Point(x, y), new Point(x, y), thickness);
+    super(s, s.createVector(x, y), s.createVector(x, y), thickness);
     this.x = x;
     this.y = y;
     this.r = r;
@@ -78,8 +69,8 @@ class PointShape extends PointLine {
       const y2 =
         this.y +
         this.r * this.s.sin((this.s.TWO_PI * (i + 1)) / this.edgeCount);
-      const p1 = new Point(x1, y1);
-      const p2 = new Point(x2, y2);
+      const p1 = this.s.createVector(x1, y1);
+      const p2 = this.s.createVector(x2, y2);
       const line = new PointLine(this.s, p1, p2, thickness);
       this.lines.push(line);
     }
@@ -97,7 +88,7 @@ class PointShape extends PointLine {
 }
 
 const sketch = (s: p5) => {
-  let mousePositions: Point[] = [];
+  let mousePositions: p5.Vector[] = [];
   const maxPos = 12;
 
   const setup = () => {
@@ -110,7 +101,7 @@ const sketch = (s: p5) => {
   const draw = () => {
     s.background(0);
 
-    const mousePos = new Point(s.mouseX, s.mouseY);
+    const mousePos = s.createVector(s.mouseX, s.mouseY);
 
     mousePositions.unshift(mousePos);
     if (mousePositions.length > maxPos) {
