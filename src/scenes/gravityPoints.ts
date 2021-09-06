@@ -96,16 +96,14 @@ class ParticleSystem {
 class Attractor extends Particle {
   attractForceMag: number; // 吸引力大小
   radius: number; // 半径
-  diameter: number; // 直径
   constructor(s: p5, position = s.createVector(0, 0), radius = 16) {
     super(s, position);
     this.attractForceMag = 0.05;
     this.radius = radius;
-    this.diameter = radius * 2;
   }
   // 显示
   display() {
-    this.s.circle(this.position.x, this.position.y, this.diameter);
+    this.s.circle(this.position.x, this.position.y, this.radius * 2);
   }
   // 施加引力
   applyAttractForce(p: Particle) {
@@ -153,21 +151,21 @@ const sketch = (s: p5) => {
           attractorA.applyAttractForce(attractorB);
 
           // 靠的太近则吸引体A吸收吸引体B
-          // if (!attractorA.lifespan || !attractorB.lifespan) {
-          //   return;
-          // }
-          // const distAB = p5.Vector.dist(
-          //   attractorA.position,
-          //   attractorB.position
-          // );
-          // const distMin = (attractorA.radius + attractorB.radius) * 0.8;
-          // const isNear = distAB < distMin;
-          // if (isNear) {
-          //   attractorA.attractForceMag += attractorB.attractForceMag;
-          //   attractorA.radius += attractorB.radius;
-          //   attractorB.lifespan = 0;
-          //   console.log({ attractorA, attractorB });
-          // }
+          if (!attractorA.lifespan || !attractorB.lifespan) {
+            return;
+          }
+          const distAB = p5.Vector.dist(
+            attractorA.position,
+            attractorB.position
+          );
+          const distMin = (attractorA.radius + attractorB.radius) * 0.8;
+          const isNear = distAB < distMin;
+          if (isNear) {
+            attractorA.attractForceMag += attractorB.attractForceMag;
+            attractorA.radius += attractorB.radius;
+            attractorB.lifespan = 0;
+            console.log({ attractorA, attractorB });
+          }
         }
       }
     }
