@@ -5,9 +5,11 @@ class Particle {
   position: p5.Vector; // 位置
   velocity: p5.Vector; // 速度
   acceleration: p5.Vector; // 加速度
+  lifespan: number; // 寿命
   constructor(s: p5, position = s.createVector(0, 0)) {
     this.s = s;
     this.position = position.copy();
+    this.lifespan = 1;
     this.velocity = this.s.createVector(0, 0);
     this.acceleration = this.s.createVector(0, 0);
   }
@@ -23,8 +25,10 @@ class Particle {
   }
   // 运行
   run() {
-    this.update();
-    this.display();
+    if (this.lifespan) {
+      this.update();
+      this.display();
+    }
   }
   // 施加力
   applyForce(force: p5.Vector) {
@@ -91,13 +95,17 @@ class ParticleSystem {
 
 class Attractor extends Particle {
   attractForceMag: number; // 吸引力大小
-  constructor(s: p5, position = s.createVector(0, 0)) {
+  radius: number; // 半径
+  diameter: number; // 直径
+  constructor(s: p5, position = s.createVector(0, 0), radius = 16) {
     super(s, position);
     this.attractForceMag = 0.05;
+    this.radius = radius;
+    this.diameter = radius * 2;
   }
   // 显示
   display() {
-    this.s.circle(this.position.x, this.position.y, 32);
+    this.s.circle(this.position.x, this.position.y, this.diameter);
   }
   // 施加引力
   applyAttractForce(p: Particle) {
@@ -143,6 +151,23 @@ const sketch = (s: p5) => {
           const attractorA = attractors[j];
           const attractorB = attractors[i];
           attractorA.applyAttractForce(attractorB);
+
+          // 靠的太近则吸引体A吸收吸引体B
+          // if (!attractorA.lifespan || !attractorB.lifespan) {
+          //   return;
+          // }
+          // const distAB = p5.Vector.dist(
+          //   attractorA.position,
+          //   attractorB.position
+          // );
+          // const distMin = (attractorA.radius + attractorB.radius) * 0.8;
+          // const isNear = distAB < distMin;
+          // if (isNear) {
+          //   attractorA.attractForceMag += attractorB.attractForceMag;
+          //   attractorA.radius += attractorB.radius;
+          //   attractorB.lifespan = 0;
+          //   console.log({ attractorA, attractorB });
+          // }
         }
       }
     }
