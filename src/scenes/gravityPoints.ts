@@ -96,10 +96,12 @@ class ParticleSystem {
 class Attractor extends Particle {
   attractForceMag: number; // 吸引力大小
   radius: number; // 半径
-  constructor(s: p5, position = s.createVector(0, 0), radius = 16) {
+  id: number; // id标识
+  constructor(s: p5, position = s.createVector(0, 0), radius = 16, id = 0) {
     super(s, position);
     this.attractForceMag = 0.05;
     this.radius = radius;
+    this.id = id;
   }
   // 显示
   display() {
@@ -116,6 +118,7 @@ class Attractor extends Particle {
 const sketch = (s: p5) => {
   let ps: ParticleSystem;
   let attractors: Attractor[] = [];
+  let currentAttractorId = 0;
   let mousePos: p5.Vector;
 
   const setup = () => {
@@ -152,18 +155,22 @@ const sketch = (s: p5) => {
           attractorA.applyAttractForce(attractorB);
 
           // 靠的太近则吸引体A吸收吸引体B
-          // const distAB = p5.Vector.dist(
-          //   attractorA.position,
-          //   attractorB.position
-          // );
-          // const distMin = (attractorA.radius + attractorB.radius) * 0.8;
-          // const isNear = distAB < distMin;
-          // if (isNear) {
-          //   attractorA.attractForceMag += attractorB.attractForceMag;
-          //   attractorA.radius += attractorB.radius;
-          //   attractorB.lifespan = 0;
-          //   console.log({ attractorA, attractorB });
-          // }
+          const distAB = p5.Vector.dist(
+            attractorA.position,
+            attractorB.position
+          );
+          const distMin = (attractorA.radius + attractorB.radius) * 0.8;
+          const isNear = distAB < distMin;
+          if (isNear) {
+            attractorA.attractForceMag += attractorB.attractForceMag;
+            attractorA.radius += attractorB.radius;
+            attractorB.lifespan = 0;
+            console.log({ attractorA, attractorB });
+            attractors = attractors.filter(
+              (attractor) => attractor.id !== attractorB.id
+            );
+            attractorA.velocity = s.createVector(0, 0);
+          }
         }
       }
     }
@@ -172,8 +179,9 @@ const sketch = (s: p5) => {
   };
 
   const mousePressed = () => {
-    const attractor = new Attractor(s, mousePos);
+    const attractor = new Attractor(s, mousePos, 8, currentAttractorId);
     attractors.push(attractor);
+    currentAttractorId += 1;
   };
 
   s.setup = setup;
