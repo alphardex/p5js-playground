@@ -140,7 +140,9 @@ const sketch = (s: p5) => {
     for (let i = 0; i < attractors.length; i++) {
       for (let j = 0; j < attractors.length; j++) {
         if (i !== j) {
-          attractors[j].applyAttractForce(attractors[i]);
+          const attractorA = attractors[j];
+          const attractorB = attractors[i];
+          attractorA.applyAttractForce(attractorB);
         }
       }
     }
