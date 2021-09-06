@@ -145,27 +145,25 @@ const sketch = (s: p5) => {
     for (let i = 0; i < attractors.length; i++) {
       for (let j = 0; j < attractors.length; j++) {
         if (i !== j) {
-          // 吸引体相互吸引
           const attractorA = attractors[j];
           const attractorB = attractors[i];
+
+          // 吸引体相互吸引
           attractorA.applyAttractForce(attractorB);
 
           // 靠的太近则吸引体A吸收吸引体B
-          if (!attractorA.lifespan || !attractorB.lifespan) {
-            return;
-          }
-          const distAB = p5.Vector.dist(
-            attractorA.position,
-            attractorB.position
-          );
-          const distMin = (attractorA.radius + attractorB.radius) * 0.8;
-          const isNear = distAB < distMin;
-          if (isNear) {
-            attractorA.attractForceMag += attractorB.attractForceMag;
-            attractorA.radius += attractorB.radius;
-            attractorB.lifespan = 0;
-            console.log({ attractorA, attractorB });
-          }
+          // const distAB = p5.Vector.dist(
+          //   attractorA.position,
+          //   attractorB.position
+          // );
+          // const distMin = (attractorA.radius + attractorB.radius) * 0.8;
+          // const isNear = distAB < distMin;
+          // if (isNear) {
+          //   attractorA.attractForceMag += attractorB.attractForceMag;
+          //   attractorA.radius += attractorB.radius;
+          //   attractorB.lifespan = 0;
+          //   console.log({ attractorA, attractorB });
+          // }
         }
       }
     }
