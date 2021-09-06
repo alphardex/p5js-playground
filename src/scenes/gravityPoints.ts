@@ -165,7 +165,6 @@ const sketch = (s: p5) => {
             attractorA.attractForceMag += attractorB.attractForceMag;
             attractorA.radius += attractorB.radius;
             attractorB.lifespan = 0;
-            console.log({ attractorA, attractorB });
             attractors = attractors.filter(
               (attractor) => attractor.id !== attractorB.id
             );
