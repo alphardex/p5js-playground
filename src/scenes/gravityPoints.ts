@@ -105,13 +105,6 @@ class Attractor extends Particle {
     attractForce.setMag(this.attractForceMag);
     p.applyForce(attractForce);
   }
-  // // 施加相互吸引力
-  // applyAttractMutualForce(attractor: Attractor) {
-  //   const attractForce = p5.Vector.sub(this.position, attractor.position);
-  //   attractForce.setMag(0.5);
-  //   attractor.applyForce(attractForce);
-  //   console.log(attractor);
-  // }
 }
 
 const sketch = (s: p5) => {
@@ -139,18 +132,18 @@ const sketch = (s: p5) => {
 
     // 吸引体吸引微粒
     attractors.forEach((attractor) => {
-      attractor.display();
+      attractor.run();
       ps.applyAttractor(attractor);
     });
 
     // 吸引体相互吸引
-    // for (let i = 0; i < attractors.length; i++) {
-    //   for (let j = 0; j < attractors.length; j++) {
-    //     if (i !== j) {
-    //       attractors[j].applyAttractMutualForce(attractors[i]);
-    //     }
-    //   }
-    // }
+    for (let i = 0; i < attractors.length; i++) {
+      for (let j = 0; j < attractors.length; j++) {
+        if (i !== j) {
+          attractors[j].applyAttractForce(attractors[i]);
+        }
+      }
+    }
 
     s.blendMode(s.BLEND);
   };
