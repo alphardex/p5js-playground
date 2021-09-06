@@ -2,16 +2,18 @@ import p5 from "p5";
 
 class Particle {
   s: p5;
-  position: p5.Vector;
-  velocity: p5.Vector;
-  acceleration: p5.Vector;
-  mass: number;
+  position: p5.Vector; // 位置
+  velocity: p5.Vector; // 速度
+  acceleration: p5.Vector; // 加速度
   constructor(s: p5, position = s.createVector(0, 0)) {
     this.s = s;
     this.position = position.copy();
     this.velocity = this.s.createVector(0, 0);
     this.acceleration = this.s.createVector(0, 0);
-    this.mass = 1;
+  }
+  // 显示
+  display() {
+    this.s.circle(this.position.x, this.position.y, 6);
   }
   // 更新状态
   update() {
@@ -19,27 +21,24 @@ class Particle {
     this.position.add(this.velocity);
     this.acceleration.mult(0);
   }
-  // 显示
-  display() {
-    this.s.circle(this.position.x, this.position.y, 6);
-  }
-  // 更新并显示
+  // 运行
   run() {
     this.update();
     this.display();
   }
   // 施加力
   applyForce(force: p5.Vector) {
-    // Newton Law 2: F = ma
-    const acceleration = p5.Vector.div(force, this.mass);
+    // 牛顿第二定律: F = ma
+    const mass = 1; // 这里设质量为单位1
+    const acceleration = p5.Vector.div(force, mass);
     this.acceleration.add(acceleration);
   }
 }
 
 class ParticleSystem {
   s: p5;
-  particles: Particle[];
-  origin: p5.Vector;
+  particles: Particle[]; // 该系统下的所有微粒
+  origin: p5.Vector; // 系统原点
   constructor(s: p5, origin = s.createVector(0, 0)) {
     this.s = s;
     this.particles = [];
@@ -54,6 +53,12 @@ class ParticleSystem {
   addParticles(count = 1) {
     for (let i = 0; i < count; i++) {
       this.addParticle();
+    }
+  }
+  // 运行
+  run() {
+    for (const particle of this.particles) {
+      particle.run();
     }
   }
   // 打乱微粒位置
@@ -74,40 +79,34 @@ class ParticleSystem {
       p.velocity = randVel;
     });
   }
-  // 运行
-  run() {
-    for (const particle of this.particles) {
-      particle.run();
-    }
-  }
   // 对每个微粒施加力
   applyForce(force: p5.Vector) {
     this.particles.forEach((p) => p.applyForce(force));
   }
-  // 对微粒应用吸引力
+  // 对每个微粒应用吸引力
   applyAttractor(attractor: Attractor) {
-    this.particles.forEach((p) => attractor.applyAttract(p));
+    this.particles.forEach((p) => attractor.applyAttractForce(p));
   }
 }
 
 class Attractor {
   s: p5;
-  position: p5.Vector;
-  gravity: number;
+  position: p5.Vector; // 位置
+  attractForceMag: number; // 吸引力大小
   constructor(s: p5, position = s.createVector(0, 0)) {
     this.s = s;
     this.position = position;
-    this.gravity = 0.05;
+    this.attractForceMag = 0.05;
   }
   // 显示
   display() {
     this.s.circle(this.position.x, this.position.y, 32);
   }
   // 施加引力
-  applyAttract(p: Particle) {
-    const gravityForce = p5.Vector.sub(this.position, p.position);
-    gravityForce.setMag(this.gravity);
-    p.applyForce(gravityForce);
+  applyAttractForce(p: Particle) {
+    const attractForce = p5.Vector.sub(this.position, p.position);
+    attractForce.setMag(this.attractForceMag);
+    p.applyForce(attractForce);
   }
 }
 
