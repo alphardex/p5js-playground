@@ -169,7 +169,7 @@ const sketch = (s: p5) => {
       attractor.run();
       ps.applyAttractor(attractor);
 
-      // 半径超限后会坍塌
+      // 当吸引体吸收过多微粒，半径超限后会坍塌
       if (
         attractor.radius >= Attractor.RADIUS_LIMIT ||
         attractor.isCollasping
@@ -181,6 +181,7 @@ const sketch = (s: p5) => {
       }
     });
 
+    // 吸引体相互之间的动作
     for (let i = 0; i < attractors.length; i++) {
       for (let j = 0; j < attractors.length; j++) {
         if (i !== j) {
@@ -190,7 +191,7 @@ const sketch = (s: p5) => {
           // 吸引体相互吸引
           attractorA.applyAttractForce(attractorB);
 
-          // 靠的太近则吸引体A吸收吸引体B
+          // 两个吸引体靠的太近，则吸引体A吸收吸引体B
           if (attractorA.isNearAnother(attractorB)) {
             attractorA.absorb(attractorB);
             attractors = attractors.filter(
@@ -204,6 +205,7 @@ const sketch = (s: p5) => {
     s.blendMode(s.BLEND);
   };
 
+  // 每点击1次，添加1个吸引体
   const mousePressed = () => {
     const attractor = new Attractor(s, mousePos, 8, currentAttractorId);
     attractors.push(attractor);
