@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";
 import IsometricWave from "../views/IsometricWave.vue";
 import BlurryLines from "../views/BlurryLines.vue";
+import GravityPoints from "../views/GravityPoints.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,6 +20,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/blurry-lines",
     name: "BlurryLines",
     component: BlurryLines,
+  },
+  {
+    path: "/gravity-points",
+    name: "GravityPoints",
+    component: GravityPoints,
   },
   {
     path: "/:pathMatch(.*)*",

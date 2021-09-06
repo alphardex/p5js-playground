@@ -11,6 +11,11 @@
           BlurryLines
         </router-link>
       </li>
+      <li>
+        <router-link :to="{ name: 'GravityPoints' }">
+          GravityPoints
+        </router-link>
+      </li>
     </ul>
   </div>
 </template>
