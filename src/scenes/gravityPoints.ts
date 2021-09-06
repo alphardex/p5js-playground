@@ -89,13 +89,10 @@ class ParticleSystem {
   }
 }
 
-class Attractor {
-  s: p5;
-  position: p5.Vector; // 位置
+class Attractor extends Particle {
   attractForceMag: number; // 吸引力大小
   constructor(s: p5, position = s.createVector(0, 0)) {
-    this.s = s;
-    this.position = position;
+    super(s, position);
     this.attractForceMag = 0.05;
   }
   // 显示
@@ -108,6 +105,13 @@ class Attractor {
     attractForce.setMag(this.attractForceMag);
     p.applyForce(attractForce);
   }
+  // // 施加相互吸引力
+  // applyAttractMutualForce(attractor: Attractor) {
+  //   const attractForce = p5.Vector.sub(this.position, attractor.position);
+  //   attractForce.setMag(0.5);
+  //   attractor.applyForce(attractForce);
+  //   console.log(attractor);
+  // }
 }
 
 const sketch = (s: p5) => {
@@ -133,10 +137,20 @@ const sketch = (s: p5) => {
 
     ps.run();
 
+    // 吸引体吸引微粒
     attractors.forEach((attractor) => {
       attractor.display();
       ps.applyAttractor(attractor);
     });
+
+    // 吸引体相互吸引
+    // for (let i = 0; i < attractors.length; i++) {
+    //   for (let j = 0; j < attractors.length; j++) {
+    //     if (i !== j) {
+    //       attractors[j].applyAttractMutualForce(attractors[i]);
+    //     }
+    //   }
+    // }
 
     s.blendMode(s.BLEND);
   };
