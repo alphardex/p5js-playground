@@ -117,6 +117,19 @@ class Attractor extends Particle {
     attractForce.setMag(this.attractForceMag);
     p.applyForce(attractForce);
   }
+  // 是否跟另一个靠得很近
+  isNearAnother(attractor: Attractor) {
+    const distAB = p5.Vector.dist(this.position, attractor.position);
+    const distMin = (this.radius + attractor.radius) * 0.8;
+    const isNear = distAB < distMin;
+    return isNear;
+  }
+  // 吸收
+  absorb(attractor: Attractor) {
+    this.attractForceMag += attractor.attractForceMag;
+    this.radius += attractor.radius;
+    this.velocity = this.s.createVector(0, 0);
+  }
   // 坍塌
   collapse() {
     this.isCollasping = true;
@@ -178,19 +191,11 @@ const sketch = (s: p5) => {
           attractorA.applyAttractForce(attractorB);
 
           // 靠的太近则吸引体A吸收吸引体B
-          const distAB = p5.Vector.dist(
-            attractorA.position,
-            attractorB.position
-          );
-          const distMin = (attractorA.radius + attractorB.radius) * 0.8;
-          const isNear = distAB < distMin;
-          if (isNear) {
-            attractorA.attractForceMag += attractorB.attractForceMag;
-            attractorA.radius += attractorB.radius;
+          if (attractorA.isNearAnother(attractorB)) {
+            attractorA.absorb(attractorB);
             attractors = attractors.filter(
               (attractor) => attractor.id !== attractorB.id
             );
-            attractorA.velocity = s.createVector(0, 0);
           }
         }
       }
