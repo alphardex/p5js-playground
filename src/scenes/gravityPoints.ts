@@ -5,11 +5,9 @@ class Particle {
   position: p5.Vector; // 位置
   velocity: p5.Vector; // 速度
   acceleration: p5.Vector; // 加速度
-  lifespan: number; // 寿命
   constructor(s: p5, position = s.createVector(0, 0)) {
     this.s = s;
     this.position = position.copy();
-    this.lifespan = 1;
     this.velocity = this.s.createVector(0, 0);
     this.acceleration = this.s.createVector(0, 0);
   }
@@ -25,10 +23,8 @@ class Particle {
   }
   // 运行
   run() {
-    if (this.lifespan) {
-      this.update();
-      this.display();
-    }
+    this.update();
+    this.display();
   }
   // 施加力
   applyForce(force: p5.Vector) {
@@ -164,7 +160,6 @@ const sketch = (s: p5) => {
           if (isNear) {
             attractorA.attractForceMag += attractorB.attractForceMag;
             attractorA.radius += attractorB.radius;
-            attractorB.lifespan = 0;
             attractors = attractors.filter(
               (attractor) => attractor.id !== attractorB.id
             );
