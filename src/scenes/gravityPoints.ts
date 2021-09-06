@@ -5,11 +5,13 @@ class Particle {
   position: p5.Vector; // 位置
   velocity: p5.Vector; // 速度
   acceleration: p5.Vector; // 加速度
+  topSpeed: number; // 速度上限
   constructor(s: p5, position = s.createVector(0, 0)) {
     this.s = s;
     this.position = position.copy();
     this.velocity = this.s.createVector(0, 0);
     this.acceleration = this.s.createVector(0, 0);
+    this.topSpeed = 12;
   }
   // 显示
   display() {
@@ -18,6 +20,7 @@ class Particle {
   // 更新状态
   update() {
     this.velocity.add(this.acceleration);
+    this.velocity.limit(this.topSpeed);
     this.position.add(this.velocity);
     this.acceleration.mult(0);
   }
@@ -93,11 +96,16 @@ class Attractor extends Particle {
   attractForceMag: number; // 吸引力大小
   radius: number; // 半径
   id: number; // id标识
+  isCollasping: boolean; // 是否正在坍塌
+  isDead: boolean; // 是否坍塌完毕
+  static RADIUS_LIMIT = 100; // 半径上限
   constructor(s: p5, position = s.createVector(0, 0), radius = 16, id = 0) {
     super(s, position);
     this.attractForceMag = 0.05;
     this.radius = radius;
     this.id = id;
+    this.isCollasping = false;
+    this.isDead = false;
   }
   // 显示
   display() {
@@ -108,6 +116,14 @@ class Attractor extends Particle {
     const attractForce = p5.Vector.sub(this.position, p.position);
     attractForce.setMag(this.attractForceMag);
     p.applyForce(attractForce);
+  }
+  // 坍塌
+  collapse() {
+    this.isCollasping = true;
+    this.radius *= 0.75;
+    if (this.radius < 1) {
+      this.isDead = true;
+    }
   }
 }
 
@@ -139,6 +155,17 @@ const sketch = (s: p5) => {
     attractors.forEach((attractor) => {
       attractor.run();
       ps.applyAttractor(attractor);
+
+      // 半径超限后会坍塌
+      if (
+        attractor.radius >= Attractor.RADIUS_LIMIT ||
+        attractor.isCollasping
+      ) {
+        attractor.collapse();
+        if (attractor.isDead) {
+          attractors = attractors.filter((item) => item.id !== attractor.id);
+        }
+      }
     });
 
     for (let i = 0; i < attractors.length; i++) {
