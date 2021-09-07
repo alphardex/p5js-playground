@@ -6,19 +6,33 @@ class Particle {
   velocity: p5.Vector; // 速度
   acceleration: p5.Vector; // 加速度
   topSpeed: number; // 速度上限
+  lastPosition: p5.Vector; // 上一个位置（用来创建延迟拖尾效果）
   constructor(s: p5, position = s.createVector(0, 0)) {
     this.s = s;
     this.position = position.copy();
     this.velocity = this.s.createVector(0, 0);
     this.acceleration = this.s.createVector(0, 0);
     this.topSpeed = 12;
+    this.lastPosition = this.s.createVector(0, 0);
   }
   // 显示
   display() {
-    this.s.circle(this.position.x, this.position.y, 6);
+    // this.s.circle(this.position.x, this.position.y, 6);
+    this.s.fill(255);
+    this.s.stroke(255);
+    this.s.strokeWeight(2);
+    this.s.strokeJoin(this.s.ROUND);
+    this.s.strokeCap(this.s.ROUND);
+    this.s.line(
+      this.position.x,
+      this.position.y,
+      this.lastPosition.x,
+      this.lastPosition.y
+    );
   }
   // 更新状态
   update() {
+    this.lastPosition = this.position.copy();
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.topSpeed);
     this.position.add(this.velocity);
@@ -157,6 +171,7 @@ const sketch = (s: p5) => {
     c2: p5.Color,
     axis: number
   ) => {
+    s.strokeWeight(1);
     if (axis === 1) {
       // Top to bottom gradient
       for (let i = y; i <= y + h; i++) {
