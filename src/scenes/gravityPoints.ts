@@ -112,6 +112,7 @@ class Attractor extends Particle {
   id: number; // id标识
   isCollasping: boolean; // 是否正在坍塌
   isDead: boolean; // 是否坍塌完毕
+  oscillatingRadius: number; // 波动半径
   static RADIUS_LIMIT = 100; // 半径上限
   constructor(s: p5, position = s.createVector(0, 0), radius = 16, id = 0) {
     super(s, position);
@@ -120,10 +121,15 @@ class Attractor extends Particle {
     this.id = id;
     this.isCollasping = false;
     this.isDead = false;
+    this.oscillatingRadius = 0;
   }
   // 显示
   display() {
-    this.s.circle(this.position.x, this.position.y, this.radius * 2);
+    this.s.blendMode(this.s.BLEND);
+    this.s.stroke(0);
+    this.s.fill("#000000");
+    this.oscillate();
+    this.s.circle(this.position.x, this.position.y, this.oscillatingRadius * 2);
   }
   // 施加引力
   applyAttractForce(p: Particle) {
@@ -151,6 +157,17 @@ class Attractor extends Particle {
     if (this.radius < 1) {
       this.isDead = true;
     }
+  }
+  // 振荡
+  oscillate() {
+    const oscillatingRadius = this.s.map(
+      this.s.sin(this.s.frameCount / 6) * 2,
+      -1,
+      1,
+      this.radius * 0.8,
+      this.radius
+    );
+    this.oscillatingRadius = oscillatingRadius;
   }
 }
 
