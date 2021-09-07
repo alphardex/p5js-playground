@@ -205,6 +205,10 @@ const sketch = (s: p5) => {
     ps.wander();
   };
 
+  const windowResized = () => {
+    s.resizeCanvas(s.windowWidth, s.windowHeight);
+  };
+
   const draw = () => {
     mousePos = s.createVector(s.mouseX, s.mouseY);
 
@@ -272,6 +276,7 @@ const sketch = (s: p5) => {
   };
 
   s.setup = setup;
+  s.windowResized = windowResized;
   s.draw = draw;
   s.mousePressed = mousePressed;
 };
