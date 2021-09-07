@@ -192,7 +192,11 @@ const sketch = (s: p5) => {
   };
 
   const setup = () => {
-    s.createCanvas(s.windowWidth, s.windowHeight);
+    const canvas = s.createCanvas(s.windowWidth, s.windowHeight);
+
+    // 场景半透明化，使线条的拖尾更加清晰
+    const ctx = (canvas as any).drawingContext as CanvasRenderingContext2D;
+    ctx.globalAlpha = 0.5;
 
     ps = new ParticleSystem(s, s.createVector(s.width / 2, s.height / 2));
 
