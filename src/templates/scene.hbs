@@ -5,9 +5,14 @@ const sketch = (s: p5) => {
     s.createCanvas(s.windowWidth, s.windowHeight);
   };
 
+  const windowResized = () => {
+    s.resizeCanvas(s.windowWidth, s.windowHeight);
+  };
+
   const draw = () => {};
 
   s.setup = setup;
+  s.windowResized = windowResized;
   s.draw = draw;
 };
 
